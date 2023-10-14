@@ -11,10 +11,10 @@ import (
 )
 
 type UserHandler struct {
-	UserUseCase *usecase.UserUseCase
+	UserUseCase usecase.UserUseCase
 }
 
-func NewUserHandler(uc *usecase.UserUseCase) *UserHandler {
+func NewUserHandler(uc usecase.UserUseCase) *UserHandler {
 	return &UserHandler{UserUseCase: uc}
 }
 
@@ -112,4 +112,27 @@ func (uh *UserHandler) DeleteUser(c *gin.Context) {
 		"success": true,
 		"message": "Data deleted",
 	})
+}
+
+func (uh *UserHandler) SignIn(c *gin.Context) {
+	type Login struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	var login Login
+
+	if err := c.ShouldBindJSON(&login); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, err := uh.UserUseCase.SignIn(login.Email, login.Password)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "User not found",
+		})
+	}
+
+	c.JSON(http.StatusOK, token)
 }
