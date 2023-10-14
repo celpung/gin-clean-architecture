@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/celpung/clean-gin-architecture/internal/entity"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -24,4 +25,14 @@ func ConnectDatabase() {
 	}
 
 	DB = db
+}
+
+func AutoMigrage() {
+	ConnectDatabase()
+
+	if migrateErr := DB.AutoMigrate(
+		&entity.User{},
+	); migrateErr != nil {
+		panic(migrateErr)
+	}
 }
