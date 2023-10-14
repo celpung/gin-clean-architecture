@@ -40,10 +40,10 @@ func main() {
 	userRoutes := r.Group("/users")
 	{
 		userRoutes.POST("/", userHandler.CreateUser)
-		userRoutes.GET("/", userHandler.GetAllUser, middlewares.JWTMiddleware(configs.Admin))
-		userRoutes.GET("/:id", userHandler.GetUserByID, middlewares.JWTMiddleware(configs.User))
-		userRoutes.PUT("/:id", userHandler.UpdateUser, middlewares.JWTMiddleware(configs.User))
-		userRoutes.DELETE("/:id", userHandler.DeleteUser, middlewares.JWTMiddleware(configs.Admin))
+		userRoutes.GET("/", middlewares.JWTMiddleware(configs.Admin), userHandler.GetAllUser)
+		userRoutes.GET("/:id", middlewares.JWTMiddleware(configs.User), userHandler.GetUserByID)
+		userRoutes.PUT("/:id", middlewares.JWTMiddleware(configs.User), userHandler.UpdateUser)
+		userRoutes.DELETE("/:id", middlewares.JWTMiddleware(configs.Admin), userHandler.DeleteUser)
 		userRoutes.POST("/sign-in", userHandler.SignIn)
 	}
 
